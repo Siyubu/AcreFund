@@ -1,6 +1,6 @@
 
 import { Customers as customer, Seasons as season, CustomerSummaries as cs, Repayments as payment } from '../database/models/index';
-import { customerSummary, seasonRepayment,recordsReport } from '../helpers/customerSummary'
+import { customerSummary, seasonRepayment} from '../helpers/customerSummary'
 
 export default class SeasonlessRepaymentService {
     static async registerCustomer(req, res) {
@@ -51,16 +51,30 @@ export default class SeasonlessRepaymentService {
         let customerSeasonsWithDebt = await customerSummary(customerID)
 
         if (Array.isArray(customerSeasonsWithDebt)) {
-          await seasonRepayment(customerID, customerSeasonsWithDebt, amount, date, seasonID,)
+        await seasonRepayment(customerID, customerSeasonsWithDebt, amount, date, seasonID,)
         }
-        const report = await recordsReport(customerID)
         customerSeasonsWithDebt = await customerSummary(customerID)
 
         res.status(200).json({
             customerSeasonsWithDebt,
-            report
         })
 
+    }
+
+
+    static async recordsReport (req,res)  {
+        const { customerID } = req.params
+        const reports = []
+        const records = await payment.findAll({
+            where: { customerID }
+        });
+        if (records) {
+            for (let i = 0; i < records.length; i++) {
+                reports.push(`Repaymend record #${i + 1}, with Season = ${records[i].seasonID}, and Amount = ${records[i].amount}`)
+            }
+        }
+        return res.status(200).json({report:reports.reverse()})
+         
     }
 
   

@@ -9,6 +9,7 @@ router.post("/season/register", seasonlessRepayment.registerSeason);
 router.post("/customer/summary",seasonlessRepayment.createCustomerSummary);
 router.get("/summary/:customerID",seasonlessRepayment.getCustomerSummary);
 router.get("/customer/transactions",seasonlessRepayment.clientRepayments);
+router.get("/payments@records/:customerID", seasonlessRepayment.recordsReport)
 
 
 export default router;
